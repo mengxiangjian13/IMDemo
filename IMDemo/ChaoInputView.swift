@@ -15,6 +15,7 @@ case initial, inputing, extentFunction
 
 protocol ChaoInputViewDelegate: NSObject {
     func inputView(_ inputView: ChaoInputView, didChangeToState state: ChaoInputViewState, keyboardHeight: CGFloat)
+    func inputView(_ inputView: ChaoInputView, didClickSendText text: String)
 }
 
 class ChaoInputView: UIView {
@@ -64,7 +65,12 @@ class ChaoInputView: UIView {
     }
     
     @objc func sendText() {
-        
+        if textView.text.isEmpty {
+            return
+        }
+        delegate?.inputView(self, didClickSendText: textView.text)
+        textView.text = ""
+        updateInputArea()
     }
     
     @objc func openFunction() {
@@ -166,15 +172,19 @@ class ChaoInputView: UIView {
         return 63
     }
     
-}
-
-extension ChaoInputView: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
+    private func updateInputArea() {
         textView.snp.updateConstraints { make in
             make.height.equalTo(textViewHeight)
             make.right.equalToSuperview().offset(-textViewRightMargin)
         }
         sendButton.isHidden = textView.text.isEmpty
         functionButton.isHidden = !textView.text.isEmpty
+    }
+    
+}
+
+extension ChaoInputView: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        updateInputArea()
     }
 }

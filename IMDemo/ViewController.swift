@@ -115,5 +115,9 @@ extension ViewController: ChaoInputViewDelegate {
         }
     }
     
+    func inputView(_ inputView: ChaoInputView, didClickSendText text: String) {
+        
+    }
+    
 }
 
